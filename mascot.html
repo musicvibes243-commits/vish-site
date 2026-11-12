@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Маскот</title>
+<style>
+:root{--bg1:#9fd3cf;--bg2:#b9b7dc;--ink:#2b2740}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center}
+h1{margin:0;font-size:clamp(28px,6vw,48px);font-weight:800}
+.lead{margin:0;opacity:.8}
+.mascot{position:relative;width:min(88vw,360px);aspect-ratio:9/16;border-radius:24px;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.mascot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease}
+.mascot video.on{opacity:1}
+.mascot:focus-visible{box-shadow:0 0 0 3px var(--ink)}
+.hint{margin:0;font-size:14px;opacity:.65}
+</style>
+</head>
+<body>
+<h1>Знакомьтесь!</h1>
+<p class="lead">Наведите курсор или коснитесь, чтобы увидеть другую сторону.</p>
+<div class="mascot" id="m" role="button" tabindex="0" aria-label="Переключить настроение">
+  <video id="happy" class="on" src="mascot/happy.mp4" poster="mascot/happy.jpg" muted loop playsinline preload="auto"></video>
+  <video id="angry" src="mascot/angry.mp4" poster="mascot/angry.jpg" muted loop playsinline preload="auto"></video>
+</div>
+<p class="hint">Злой режим включается при наведении или касании</p>
+<script>
+(function(){
+  var m=document.getElementById('m');
+  var happy=document.getElementById('happy');
+  var angry=document.getElementById('angry');
+  function isAngry(){ return angry.classList.contains('on'); }
+  function setAngry(on){
+    angry.classList.toggle('on',on);
+    happy.classList.toggle('on',!on);
+    try{
+      if(on){ happy.pause(); angry.play().catch(function(){}); }
+      else{ angry.pause(); happy.play().catch(function(){}); }
+    }catch(e){}
+  }
+  m.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse') setAngry(true); });
+  m.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') setAngry(false); });
+  m.addEventListener('pointerdown',function(e){ if(e.pointerType!=='mouse') setAngry(!isAngry()); });
+  m.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setAngry(!isAngry()); }
+  });
+  happy.play().catch(function(){});
+})();
+</script>
+</body>
+</html>
